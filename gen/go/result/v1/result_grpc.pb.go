@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ResultService_Ping_FullMethodName = "/result.v1.ResultService/Ping"
+	ResultService_Ping_FullMethodName            = "/result.v1.ResultService/Ping"
+	ResultService_GetTotals_FullMethodName       = "/result.v1.ResultService/GetTotals"
+	ResultService_SubscribeTotals_FullMethodName = "/result.v1.ResultService/SubscribeTotals"
 )
 
 // ResultServiceClient is the client API for ResultService service.
@@ -27,6 +29,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResultServiceClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	GetTotals(ctx context.Context, in *GetTotalsRequest, opts ...grpc.CallOption) (*GetTotalsResponse, error)
+	SubscribeTotals(ctx context.Context, in *SubscribeTotalsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SubscribeTotalsResponse], error)
 }
 
 type resultServiceClient struct {
@@ -47,11 +51,42 @@ func (c *resultServiceClient) Ping(ctx context.Context, in *PingRequest, opts ..
 	return out, nil
 }
 
+func (c *resultServiceClient) GetTotals(ctx context.Context, in *GetTotalsRequest, opts ...grpc.CallOption) (*GetTotalsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTotalsResponse)
+	err := c.cc.Invoke(ctx, ResultService_GetTotals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *resultServiceClient) SubscribeTotals(ctx context.Context, in *SubscribeTotalsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SubscribeTotalsResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ResultService_ServiceDesc.Streams[0], ResultService_SubscribeTotals_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SubscribeTotalsRequest, SubscribeTotalsResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ResultService_SubscribeTotalsClient = grpc.ServerStreamingClient[SubscribeTotalsResponse]
+
 // ResultServiceServer is the server API for ResultService service.
 // All implementations must embed UnimplementedResultServiceServer
 // for forward compatibility.
 type ResultServiceServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	GetTotals(context.Context, *GetTotalsRequest) (*GetTotalsResponse, error)
+	SubscribeTotals(*SubscribeTotalsRequest, grpc.ServerStreamingServer[SubscribeTotalsResponse]) error
 	mustEmbedUnimplementedResultServiceServer()
 }
 
@@ -64,6 +99,12 @@ type UnimplementedResultServiceServer struct{}
 
 func (UnimplementedResultServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedResultServiceServer) GetTotals(context.Context, *GetTotalsRequest) (*GetTotalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTotals not implemented")
+}
+func (UnimplementedResultServiceServer) SubscribeTotals(*SubscribeTotalsRequest, grpc.ServerStreamingServer[SubscribeTotalsResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeTotals not implemented")
 }
 func (UnimplementedResultServiceServer) mustEmbedUnimplementedResultServiceServer() {}
 func (UnimplementedResultServiceServer) testEmbeddedByValue()                       {}
@@ -104,6 +145,35 @@ func _ResultService_Ping_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ResultService_GetTotals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTotalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResultServiceServer).GetTotals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ResultService_GetTotals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResultServiceServer).GetTotals(ctx, req.(*GetTotalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ResultService_SubscribeTotals_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeTotalsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ResultServiceServer).SubscribeTotals(m, &grpc.GenericServerStream[SubscribeTotalsRequest, SubscribeTotalsResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ResultService_SubscribeTotalsServer = grpc.ServerStreamingServer[SubscribeTotalsResponse]
+
 // ResultService_ServiceDesc is the grpc.ServiceDesc for ResultService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -115,7 +185,17 @@ var ResultService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Ping",
 			Handler:    _ResultService_Ping_Handler,
 		},
+		{
+			MethodName: "GetTotals",
+			Handler:    _ResultService_GetTotals_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubscribeTotals",
+			Handler:       _ResultService_SubscribeTotals_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "result/v1/result.proto",
 }

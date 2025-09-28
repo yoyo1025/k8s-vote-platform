@@ -101,6 +101,242 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
+type GetTotalsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTotalsRequest) Reset() {
+	*x = GetTotalsRequest{}
+	mi := &file_result_v1_result_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTotalsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTotalsRequest) ProtoMessage() {}
+
+func (x *GetTotalsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_result_v1_result_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTotalsRequest.ProtoReflect.Descriptor instead.
+func (*GetTotalsRequest) Descriptor() ([]byte, []int) {
+	return file_result_v1_result_proto_rawDescGZIP(), []int{2}
+}
+
+type Totals struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CandidateId   uint64                 `protobuf:"varint,1,opt,name=candidate_id,json=candidateId,proto3" json:"candidate_id,omitempty"`
+	Count         uint64                 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Totals) Reset() {
+	*x = Totals{}
+	mi := &file_result_v1_result_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Totals) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Totals) ProtoMessage() {}
+
+func (x *Totals) ProtoReflect() protoreflect.Message {
+	mi := &file_result_v1_result_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Totals.ProtoReflect.Descriptor instead.
+func (*Totals) Descriptor() ([]byte, []int) {
+	return file_result_v1_result_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Totals) GetCandidateId() uint64 {
+	if x != nil {
+		return x.CandidateId
+	}
+	return 0
+}
+
+func (x *Totals) GetCount() uint64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetTotalsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Totals        []*Totals              `protobuf:"bytes,1,rep,name=totals,proto3" json:"totals,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTotalsResponse) Reset() {
+	*x = GetTotalsResponse{}
+	mi := &file_result_v1_result_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTotalsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTotalsResponse) ProtoMessage() {}
+
+func (x *GetTotalsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_result_v1_result_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTotalsResponse.ProtoReflect.Descriptor instead.
+func (*GetTotalsResponse) Descriptor() ([]byte, []int) {
+	return file_result_v1_result_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetTotalsResponse) GetTotals() []*Totals {
+	if x != nil {
+		return x.Totals
+	}
+	return nil
+}
+
+func (x *GetTotalsResponse) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type SubscribeTotalsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tenant        string                 `protobuf:"bytes,1,opt,name=tenant,proto3" json:"tenant,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubscribeTotalsRequest) Reset() {
+	*x = SubscribeTotalsRequest{}
+	mi := &file_result_v1_result_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubscribeTotalsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubscribeTotalsRequest) ProtoMessage() {}
+
+func (x *SubscribeTotalsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_result_v1_result_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubscribeTotalsRequest.ProtoReflect.Descriptor instead.
+func (*SubscribeTotalsRequest) Descriptor() ([]byte, []int) {
+	return file_result_v1_result_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SubscribeTotalsRequest) GetTenant() string {
+	if x != nil {
+		return x.Tenant
+	}
+	return ""
+}
+
+type SubscribeTotalsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Totals        []*Totals              `protobuf:"bytes,1,rep,name=totals,proto3" json:"totals,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubscribeTotalsResponse) Reset() {
+	*x = SubscribeTotalsResponse{}
+	mi := &file_result_v1_result_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubscribeTotalsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubscribeTotalsResponse) ProtoMessage() {}
+
+func (x *SubscribeTotalsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_result_v1_result_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubscribeTotalsResponse.ProtoReflect.Descriptor instead.
+func (*SubscribeTotalsResponse) Descriptor() ([]byte, []int) {
+	return file_result_v1_result_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SubscribeTotalsResponse) GetTotals() []*Totals {
+	if x != nil {
+		return x.Totals
+	}
+	return nil
+}
+
+func (x *SubscribeTotalsResponse) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 var File_result_v1_result_proto protoreflect.FileDescriptor
 
 const file_result_v1_result_proto_rawDesc = "" +
@@ -108,9 +344,25 @@ const file_result_v1_result_proto_rawDesc = "" +
 	"\x16result/v1/result.proto\x12\tresult.v1\"\r\n" +
 	"\vPingRequest\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2H\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\x12\n" +
+	"\x10GetTotalsRequest\"A\n" +
+	"\x06Totals\x12!\n" +
+	"\fcandidate_id\x18\x01 \x01(\x04R\vcandidateId\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x04R\x05count\"]\n" +
+	"\x11GetTotalsResponse\x12)\n" +
+	"\x06totals\x18\x01 \x03(\v2\x11.result.v1.TotalsR\x06totals\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x02 \x01(\tR\tupdatedAt\"0\n" +
+	"\x16SubscribeTotalsRequest\x12\x16\n" +
+	"\x06tenant\x18\x01 \x01(\tR\x06tenant\"c\n" +
+	"\x17SubscribeTotalsResponse\x12)\n" +
+	"\x06totals\x18\x01 \x03(\v2\x11.result.v1.TotalsR\x06totals\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\x02 \x01(\tR\tupdatedAt2\xec\x01\n" +
 	"\rResultService\x127\n" +
-	"\x04Ping\x12\x16.result.v1.PingRequest\x1a\x17.result.v1.PingResponseBAZ?github.com/yoyo1025/k8s-vote-platform/gen/go/result/v1;resultv1b\x06proto3"
+	"\x04Ping\x12\x16.result.v1.PingRequest\x1a\x17.result.v1.PingResponse\x12F\n" +
+	"\tGetTotals\x12\x1b.result.v1.GetTotalsRequest\x1a\x1c.result.v1.GetTotalsResponse\x12Z\n" +
+	"\x0fSubscribeTotals\x12!.result.v1.SubscribeTotalsRequest\x1a\".result.v1.SubscribeTotalsResponse0\x01BAZ?github.com/yoyo1025/k8s-vote-platform/gen/go/result/v1;resultv1b\x06proto3"
 
 var (
 	file_result_v1_result_proto_rawDescOnce sync.Once
@@ -124,19 +376,30 @@ func file_result_v1_result_proto_rawDescGZIP() []byte {
 	return file_result_v1_result_proto_rawDescData
 }
 
-var file_result_v1_result_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_result_v1_result_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_result_v1_result_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: result.v1.PingRequest
-	(*PingResponse)(nil), // 1: result.v1.PingResponse
+	(*PingRequest)(nil),             // 0: result.v1.PingRequest
+	(*PingResponse)(nil),            // 1: result.v1.PingResponse
+	(*GetTotalsRequest)(nil),        // 2: result.v1.GetTotalsRequest
+	(*Totals)(nil),                  // 3: result.v1.Totals
+	(*GetTotalsResponse)(nil),       // 4: result.v1.GetTotalsResponse
+	(*SubscribeTotalsRequest)(nil),  // 5: result.v1.SubscribeTotalsRequest
+	(*SubscribeTotalsResponse)(nil), // 6: result.v1.SubscribeTotalsResponse
 }
 var file_result_v1_result_proto_depIdxs = []int32{
-	0, // 0: result.v1.ResultService.Ping:input_type -> result.v1.PingRequest
-	1, // 1: result.v1.ResultService.Ping:output_type -> result.v1.PingResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: result.v1.GetTotalsResponse.totals:type_name -> result.v1.Totals
+	3, // 1: result.v1.SubscribeTotalsResponse.totals:type_name -> result.v1.Totals
+	0, // 2: result.v1.ResultService.Ping:input_type -> result.v1.PingRequest
+	2, // 3: result.v1.ResultService.GetTotals:input_type -> result.v1.GetTotalsRequest
+	5, // 4: result.v1.ResultService.SubscribeTotals:input_type -> result.v1.SubscribeTotalsRequest
+	1, // 5: result.v1.ResultService.Ping:output_type -> result.v1.PingResponse
+	4, // 6: result.v1.ResultService.GetTotals:output_type -> result.v1.GetTotalsResponse
+	6, // 7: result.v1.ResultService.SubscribeTotals:output_type -> result.v1.SubscribeTotalsResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_result_v1_result_proto_init() }
@@ -150,7 +413,7 @@ func file_result_v1_result_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_result_v1_result_proto_rawDesc), len(file_result_v1_result_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
