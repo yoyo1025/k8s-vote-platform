@@ -49,4 +49,9 @@ func (s *Server) routes() {
 		}
 		return c.JSON(http.StatusOK, resp)
 	})
+
+}
+
+func (s *Server) Start(addr string) error {
+	return s.e.Start(addr)
 }
