@@ -1,2 +1,16 @@
 gen:
 	./tools/scripts/gen-proto.sh
+
+run-auth:
+	@cd services/auth && \
+	AUTH_PRIVATE_KEY_FILE=./dev_private.pem \
+	AUTH_ISSUER=http://localhost:18080 \
+	go run ./cmd/auth
+
+run-result-query:
+	@cd services/result-query && go run ./cmd/result-query
+
+run-result-api:
+	@cd services/result-api && \
+	RESULT_QUERY_ADDR=127.0.0.1:50051 \
+	go run ./cmd/result-api
