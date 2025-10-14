@@ -2,16 +2,14 @@ services:
   kong:
     image: kong:3
     environment:
-      KONG_DATABASE: "off"                                   # DB-less
-      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml   # ← これを読む
-      KONG_PROXY_LISTEN: "0.0.0.0:8000, 0.0.0.0:8443 ssl"    # HTTP/HTTPS
-      KONG_ADMIN_LISTEN: "off"
-      # 自己署名TLSを使うなら cert/key をマウントして下2つを設定
-      # KONG_SSL_CERT: /kong/certs/cert.pem
-      # KONG_SSL_CERT_KEY: /kong/certs/key.pem
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml
+      KONG_PROXY_LISTEN: "0.0.0.0:8000, 0.0.0.0:8443 ssl"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 ssl"   # ← 有効化
     ports:
-      - "8000:8000"    # http
-      - "8443:8443"    # https
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"   # ← Admin API (HTTP)
+      - "8444:8444"   # ← Admin API (HTTPS)
     volumes:
       - ./ops/kong/kong.yaml:/kong/declarative/kong.yaml:ro
-      # - ./ops/kong/certs:/kong/certs:ro   # cert.pem/key.pem を置いたら有効化
