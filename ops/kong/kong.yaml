@@ -24,6 +24,7 @@ services:
         methods:
           - GET
           - POST
+          - OPTIONS
         plugins:
           - name: jwt
             config:
