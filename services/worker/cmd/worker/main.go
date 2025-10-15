@@ -23,6 +23,7 @@ func main() {
 		RedisStream:    getenv("REDIS_STREAM", "stream:votes"),
 		RedisGroup:     getenv("REDIS_GROUP", "tally"),
 		RedisConsumer:  getenv("REDIS_CONSUMER", worker.GenerateConsumerID()),
+		ResultsChannel: getenv("RESULTS_CHANNEL", "results:totals"),
 		BatchSize:      atoiDefault(os.Getenv("BATCH_SIZE"), 100),
 		BlockInterval:  durationDefault(os.Getenv("BLOCK_INTERVAL"), 5*time.Second),
 		IdleTimeout:    durationDefault(os.Getenv("IDLE_TIMEOUT"), 30*time.Second),

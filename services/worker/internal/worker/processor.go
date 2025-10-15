@@ -17,12 +17,13 @@ import (
 
 // Config describes the external dependencies and runtime configuration of the worker.
 type Config struct {
-	RedisAddr     string
-	RedisUsername string
-	RedisPassword string
-	RedisStream   string
-	RedisGroup    string
-	RedisConsumer string
+	RedisAddr      string
+	RedisUsername  string
+	RedisPassword  string
+	RedisStream    string
+	RedisGroup     string
+	RedisConsumer  string
+	ResultsChannel string
 
 	BatchSize     int
 	BlockInterval time.Duration
@@ -76,6 +77,9 @@ func NewProcessor(ctx context.Context, cfg Config) (*Processor, error) {
 	if cfg.PGConnString == "" {
 		return nil, errors.New("postgres connection string is required")
 	}
+	if cfg.ResultsChannel == "" {
+		cfg.ResultsChannel = "results:totals"
+	}
 
 	logger := log.New(os.Stdout, "[worker] ", log.LstdFlags|log.Lmicroseconds|log.Lmsgprefix)
 
@@ -104,10 +108,11 @@ func NewProcessor(ctx context.Context, cfg Config) (*Processor, error) {
 	}
 
 	return &Processor{
-		cfg:   cfg,
-		log:   logger,
-		redis: rdb,
-		pg:    pool,
+		cfg:       cfg,
+		log:       logger,
+		redis:     rdb,
+		pg:        pool,
+		lastClaim: time.Now(),
 	}, nil
 }
 
@@ -319,6 +324,12 @@ func (p *Processor) processBatch(ctx context.Context, entries []voteEntry) error
 	if len(ackIDs) > 0 {
 		if err := p.redis.XAck(ctx, p.cfg.RedisStream, p.cfg.RedisGroup, ackIDs...).Err(); err != nil {
 			return fmt.Errorf("ack messages: %w", err)
+		}
+	}
+
+	if len(increments) > 0 && p.cfg.ResultsChannel != "" {
+		if err := p.redis.Publish(ctx, p.cfg.ResultsChannel, "refresh").Err(); err != nil {
+			p.log.Printf("publish totals update error: %v", err)
 		}
 	}
 
