@@ -160,6 +160,7 @@ services:
       REDIS_ADDR: vote-redis:6379
       REDIS_STREAM: stream:votes
       REDIS_GROUP: tally
+      RESULTS_CHANNEL: results:totals
       PG_HOST: vote-postgres
       PG_PORT: "5432"
       PG_USER: vote
@@ -195,6 +196,16 @@ services:
       context: .
       dockerfile: services/result-query/Dockerfile
     profiles: [ "result" ]
+    environment:
+      GRPC_ADDR: ":50051"
+      REDIS_ADDR: vote-redis:6379
+      REDIS_CHANNEL: results:totals
+      PG_HOST: vote-postgres
+      PG_PORT: "5432"
+      PG_USER: vote
+      PG_PASSWORD: votepass
+      PG_DATABASE: vote
+      PG_SSLMODE: disable
     ports:
       - "50051:50051"
     networks:
