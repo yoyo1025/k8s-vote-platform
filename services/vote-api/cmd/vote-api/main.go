@@ -25,7 +25,7 @@ func main() {
 		RedisStream:   getenv("REDIS_STREAM", "stream:votes"),
 		PGConnString:  buildPostgresDSN(),
 	}
-	httpAddr := getenv("HTTP_ADDR", ":8080")
+	httpAddr := getenv("HTTP_ADDR", ":9080")
 
 	srv, err := server.New(ctx, cfg)
 	if err != nil {

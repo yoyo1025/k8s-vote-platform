@@ -129,7 +129,7 @@ services:
     working_dir: /workspace/services/vote-api
     command: go run ./cmd/vote-api
     environment:
-      HTTP_ADDR: ":8080"
+      HTTP_ADDR: ":9080"
       REDIS_ADDR: vote-redis:6379
       REDIS_STREAM: stream:votes
       PG_HOST: vote-postgres
@@ -141,7 +141,7 @@ services:
     volumes:
       - .:/workspace
     ports:
-      - "8080:8080"
+      - "9080:9080"
     restart: unless-stopped
     networks:
       - vote-net
