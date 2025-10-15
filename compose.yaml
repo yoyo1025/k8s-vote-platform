@@ -175,5 +175,48 @@ services:
     networks:
       - vote-net
 
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    profiles: [ "auth" ]
+    environment:
+      AUTH_PRIVATE_KEY_FILE: /app/dev_private.pem
+      AUTH_ISSUER: http://localhost:18080
+    ports:
+      - "18080:18080"
+    networks:
+      - kong-net
+      - vote-net
+    restart: unless-stopped
+
+  result-query:
+    build:
+      context: .
+      dockerfile: services/result-query/Dockerfile
+    profiles: [ "result" ]
+    ports:
+      - "50051:50051"
+    networks:
+      - vote-net
+    restart: unless-stopped
+
+  result-api:
+    build:
+      context: .
+      dockerfile: services/result-api/Dockerfile
+    profiles: [ "result" ]
+    depends_on:
+      result-query:
+        condition: service_started
+    environment:
+      RESULT_QUERY_ADDR: result-query:50051
+    ports:
+      - "8080:8080"
+    networks:
+      - vote-net
+      - kong-net
+    restart: unless-stopped
+
 volumes:
   vote-postgres-data:
