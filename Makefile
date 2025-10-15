@@ -14,3 +14,6 @@ run-result-api:
 	@cd services/result-api && \
 	RESULT_QUERY_ADDR=127.0.0.1:50051 \
 	go run ./cmd/result-api
+
+start:
+	docker compose --profile vote --profile auth --profile result --profile database --profile gateway up --build

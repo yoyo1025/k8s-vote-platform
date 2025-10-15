@@ -11,6 +11,8 @@ x-kong-config:
 networks:
   kong-net:
     external: false
+  vote-net:
+    external: false
 
 services:
   kong-migrations:
@@ -79,3 +81,153 @@ services:
     tty: true
     networks:
       - kong-net
+
+  vote-redis:
+    image: redis:7
+    profiles: [ "vote" ]
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - vote-net
+    ports:
+      - "6379:6379"
+
+  vote-postgres:
+    image: postgres:16.1-bullseye
+    profiles: [ "vote" ]
+    environment:
+      POSTGRES_DB: vote
+      POSTGRES_USER: vote
+      POSTGRES_PASSWORD: votepass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vote"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+      - vote-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - vote-net
+    ports:
+      - "5432:5432"
+
+  vote-api:
+    image: golang:1.25
+    profiles: [ "vote" ]
+    depends_on:
+      vote-redis:
+        condition: service_started
+      vote-postgres:
+        condition: service_healthy
+    working_dir: /workspace/services/vote-api
+    command: go run ./cmd/vote-api
+    environment:
+      HTTP_ADDR: ":9080"
+      REDIS_ADDR: vote-redis:6379
+      REDIS_STREAM: stream:votes
+      PG_HOST: vote-postgres
+      PG_PORT: "5432"
+      PG_USER: vote
+      PG_PASSWORD: votepass
+      PG_DATABASE: vote
+      PG_SSLMODE: disable
+    volumes:
+      - .:/workspace
+    ports:
+      - "9080:9080"
+    restart: unless-stopped
+    networks:
+      - vote-net
+
+  vote-worker:
+    image: golang:1.25
+    profiles: [ "vote" ]
+    depends_on:
+      vote-redis:
+        condition: service_started
+      vote-postgres:
+        condition: service_healthy
+    working_dir: /workspace/services/worker
+    command: go run ./cmd/worker
+    environment:
+      REDIS_ADDR: vote-redis:6379
+      REDIS_STREAM: stream:votes
+      REDIS_GROUP: tally
+      RESULTS_CHANNEL: results:totals
+      PG_HOST: vote-postgres
+      PG_PORT: "5432"
+      PG_USER: vote
+      PG_PASSWORD: votepass
+      PG_DATABASE: vote
+      PG_SSLMODE: disable
+      BATCH_SIZE: "100"
+      BLOCK_INTERVAL: 5s
+      IDLE_TIMEOUT: 30s
+    volumes:
+      - .:/workspace
+    restart: unless-stopped
+    networks:
+      - vote-net
+
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    profiles: [ "auth" ]
+    environment:
+      AUTH_PRIVATE_KEY_FILE: /app/dev_private.pem
+      AUTH_ISSUER: http://localhost:18080
+    ports:
+      - "18080:18080"
+    networks:
+      - kong-net
+      - vote-net
+    restart: unless-stopped
+
+  result-query:
+    build:
+      context: .
+      dockerfile: services/result-query/Dockerfile
+    profiles: [ "result" ]
+    environment:
+      GRPC_ADDR: ":50051"
+      REDIS_ADDR: vote-redis:6379
+      REDIS_CHANNEL: results:totals
+      PG_HOST: vote-postgres
+      PG_PORT: "5432"
+      PG_USER: vote
+      PG_PASSWORD: votepass
+      PG_DATABASE: vote
+      PG_SSLMODE: disable
+    ports:
+      - "50051:50051"
+    networks:
+      - vote-net
+    restart: unless-stopped
+
+  result-api:
+    build:
+      context: .
+      dockerfile: services/result-api/Dockerfile
+    profiles: [ "result" ]
+    depends_on:
+      result-query:
+        condition: service_started
+    environment:
+      RESULT_QUERY_ADDR: result-query:50051
+    ports:
+      - "8080:8080"
+    networks:
+      - vote-net
+      - kong-net
+    restart: unless-stopped
+
+volumes:
+  vote-postgres-data:

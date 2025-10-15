@@ -100,3 +100,8 @@ flowchart LR
   graf --- tempo
 
 ```
+### 起動方法
+プロジェクト直下にて
+```bash
+make start
+```
