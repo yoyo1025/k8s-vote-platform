@@ -6,7 +6,9 @@ services:
     container_name: redis-01
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
-      - ./nodes/redis-01/redis.conf:/etc/redis/redis.conf
+      - ./nodes/redis-01/redis.conf:/etc/redis/redis.conf:ro
+      - ./data/redis-01:/data
+    networks: [redisnet]
 
   redis-02:
     image: redis:7
@@ -14,6 +16,8 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
       - ./nodes/redis-02/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-02:/data
+    networks: [redisnet]
 
   redis-03:
     image: redis:7
@@ -21,6 +25,8 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
       - ./nodes/redis-03/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-03:/data
+    networks: [redisnet]
 
   redis-04:
     image: redis:7
@@ -28,6 +34,8 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
       - ./nodes/redis-04/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-04:/data
+    networks: [redisnet]
 
   redis-05:
     image: redis:7
@@ -35,6 +43,8 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
       - ./nodes/redis-05/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-05:/data
+    networks: [redisnet]
 
   redis-06:
     image: redis:7
@@ -42,3 +52,8 @@ services:
     command: ["redis-server", "/etc/redis/redis.conf"]
     volumes:
       - ./nodes/redis-06/redis.conf:/etc/redis/redis.conf
+      - ./data/redis-06:/data
+    networks: [redisnet]
+
+networks:
+  redisnet: {}
