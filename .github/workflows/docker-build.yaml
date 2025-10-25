@@ -1,0 +1,34 @@
+name: Build service images
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - auth
+          - result-api
+          - result-query
+          - vote-api
+          - worker
+          - devmain
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.service }} image
+        run: |
+          make docker-build \
+            SERVICE=${{ matrix.service }} \
+            IMAGE_NAMESPACE=k8s-vote-platform \
+            IMAGE_TAG=${{ github.sha }} \
+            DOCKER_BUILD_ARGS="--pull --progress=plain"

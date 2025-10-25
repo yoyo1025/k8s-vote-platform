@@ -1,3 +1,13 @@
+SERVICES := auth result-api result-query vote-api worker devmain
+
+IMAGE_REGISTRY ?=
+IMAGE_NAMESPACE ?= k8s-vote-platform
+IMAGE_TAG ?= latest
+DOCKER_BUILD_ARGS ?=
+
+image_ref = $(strip $(if $(IMAGE_REGISTRY),$(IMAGE_REGISTRY)/,))$(IMAGE_NAMESPACE)/$1:$(IMAGE_TAG)
+
+.PHONY: gen
 gen:
 	./tools/scripts/gen-proto.sh
 
@@ -23,3 +33,19 @@ migrate-up:
 
 start:
 	docker compose --profile vote --profile auth --profile result --profile database --profile gateway up --build
+
+.PHONY: docker-build docker-build-all $(SERVICES:%=docker-build-%)
+docker-build:
+ifdef SERVICE
+	$(MAKE) docker-build-$(SERVICE)
+else
+	$(MAKE) docker-build-all
+endif
+
+docker-build-all: $(SERVICES:%=docker-build-%)
+
+docker-build-%:
+	docker build $(DOCKER_BUILD_ARGS) \
+		-f services/$*/Dockerfile \
+		-t $(call image_ref,$*) \
+		.

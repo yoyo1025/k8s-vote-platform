@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: app
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
+  app.k8s-vote/namespace: app
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - configmap.yaml
+  - secret.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      labelSelector: app.k8s-vote/component=app
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: app
+      spec:
+        template:
+          spec:
+            containers:
+              - name: app
+                imagePullPolicy: IfNotPresent

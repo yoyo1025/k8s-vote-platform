@@ -1,12 +1,15 @@
 FROM golang:1.25 AS build
 
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
 WORKDIR /src
 COPY services/auth/go.mod services/auth/go.sum ./services/auth/
 WORKDIR /src/services/auth
 RUN go mod download
 
 COPY services/auth ./
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/auth ./cmd/auth
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/auth ./cmd/auth
 
 FROM gcr.io/distroless/base-debian12
 WORKDIR /app

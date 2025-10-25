@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app.k8s-vote/component: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.k8s-vote/component: app
+  template:
+    metadata:
+      labels:
+        app.k8s-vote/component: app
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/example/app:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secret
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
