@@ -18,5 +18,8 @@ run-result-api:
 run-gateway-sync:
 	deck gateway sync --kong-addr http://localhost:8001 ops/kong/kong.yaml
 
+migrate-up:
+	GOOSE_DRIVER=postgres GOOSE_DBSTRING="postgres://vote:votepass@localhost:5432/vote?sslmode=disable" goose -dir db/migrations up
+
 start:
 	docker compose --profile vote --profile auth --profile result --profile database --profile gateway up --build
