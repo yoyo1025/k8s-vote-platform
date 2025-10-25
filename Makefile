@@ -15,5 +15,8 @@ run-result-api:
 	RESULT_QUERY_ADDR=127.0.0.1:50051 \
 	go run ./cmd/result-api
 
+run-gateway-sync:
+	deck gateway sync --kong-addr http://localhost:8001 ops/kong/kong.yaml
+
 start:
 	docker compose --profile vote --profile auth --profile result --profile database --profile gateway up --build
