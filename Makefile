@@ -44,8 +44,12 @@ endif
 
 docker-build-all: $(SERVICES:%=docker-build-%)
 
-docker-build-%:
+define DOCKER_BUILD_template
+docker-build-$(1):
 	docker build $(DOCKER_BUILD_ARGS) \
-		-f services/$*/Dockerfile \
-		-t $(call image_ref,$*) \
+		-f services/$(1)/Dockerfile \
+		-t $(call image_ref,$(1)) \
 		.
+endef
+
+$(foreach svc,$(SERVICES),$(eval $(call DOCKER_BUILD_template,$(svc))))
