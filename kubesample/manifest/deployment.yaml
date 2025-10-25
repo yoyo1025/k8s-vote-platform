@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubesample-deployment
+  namespace: kubesample
+  labels:
+    app: kubesample
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kubesample
+  template:
+    metadata:
+      labels:
+        app: kubesample
+    spec:
+      containers:
+        - name: kubesample-container
+          image: kube-sample-app:latest   # ローカルビルド想定
+          imagePullPolicy: IfNotPresent   # kind/minikube ならこれでOK
+          ports:
+            - containerPort: 4883
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
