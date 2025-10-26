@@ -1,4 +1,33 @@
 # Kubernetesサンプル
+## kindで起動する場合
+0. 事前準備
+```bash
+# コンテキスト確認
+$ kubectl config get-contexts
+
+# kindのコンテキストへ変更
+$ kubectl config use-context kind-kind
+```
+1. クラスタ作成（未作成なら）
+```bash
+$ kind create cluster --name kind
+```
+2. アプリのDockerイメージをホストDockerでビルド & 確認
+```bash
+$ docker build . -t kube-sample-app:latest --no-cache
+```
+```bash
+$ docker images | grep kube-sample-app
+```
+3. kindノードへイメージを取り込む
+```bash
+kind load docker-image kube-sample-app:latest --name kind
+```
+4. マニフェスト適用
+```bash
+$ kubectl apply -f ./manifest
+```
+
 ## MiniKubeで起動する場合
 1. Docker の宛先を Minikube に切り替える（毎シェルで最初に1回実行）
 ```bash
