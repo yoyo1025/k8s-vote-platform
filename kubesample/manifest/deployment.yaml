@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: kubesample-container
-          image: kube-sample-app:latest   # ローカルビルド想定
-          imagePullPolicy: IfNotPresent   # kind/minikube ならこれでOK
+          image: kube-sample-app:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 4883
           resources:
