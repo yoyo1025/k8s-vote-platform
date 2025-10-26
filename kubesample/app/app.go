@@ -22,5 +22,12 @@ func main() {
 		})
 	})
 
+	e.GET("/health", func(ctx echo.Context) error {
+		fmt.Println("health checked")
+		return ctx.JSON(http.StatusOK, map[string]interface{}{
+			"status": "ok!",
+		})
+	})
+
 	e.Start(":4883")
 }
