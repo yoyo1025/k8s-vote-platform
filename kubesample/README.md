@@ -1,5 +1,6 @@
 # Kubernetesサンプル
-## Dockerイメージビルド
+## Docker DesktopでKubernetesを起動する場合
+### Dockerイメージビルド
 `k8s-vote-platform/kubesample` にて
 1. ビルド
 ```bash
@@ -13,7 +14,7 @@ REPOSITORY                                TAG                                   
 kube-sample-app                           latest                                                                        99417e5c6912   46 minutes ago   1.51GB
 ```
 
-## マニフェストをKubernetesにデプロイ
+### マニフェストをKubernetesにデプロイ
 `k8s-vote-platform/kubesample/manifest` にて
 1. マニフェストをKubernetesにデプロイ
 ```bash
@@ -30,7 +31,7 @@ kube-public       Active   16m
 kube-system       Active   16m
 kubesample        Active   14m
 ```
-## 動作確認
+### 動作確認
 - service確認
 ```bash
 $ kubectl get service -n kubesample
