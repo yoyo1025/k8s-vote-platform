@@ -1,17 +1,12 @@
-FROM golang:1.25 AS build
+FROM golang:1.25-alpine3.22 AS build
 
-WORKDIR /src
-COPY services/auth/go.mod services/auth/go.sum ./services/auth/
-WORKDIR /src/services/auth
+WORKDIR /app/services/auth
+
+COPY services/auth/go.mod services/auth/go.sum ./
 RUN go mod download
 
-COPY services/auth ./
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/auth ./cmd/auth
+COPY services/auth ./ 
 
-FROM gcr.io/distroless/base-debian12
-WORKDIR /app
-COPY --from=build /out/auth /usr/local/bin/auth
-COPY --from=build /src/services/auth/dev_private.pem /app/dev_private.pem
-ENV AUTH_PRIVATE_KEY_FILE=/app/dev_private.pem
-EXPOSE 18080
-ENTRYPOINT ["/usr/local/bin/auth"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o auth ./cmd/auth
+
+CMD ["./auth"]
