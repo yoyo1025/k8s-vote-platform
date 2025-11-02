@@ -2,7 +2,7 @@ package auth
 
 import (
 	"crypto/rsa"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -40,7 +40,7 @@ func New() (*Server, error) {
 	}))
 
 	if err := loadKeys(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load keys: %v", err)
 	}
 
 	s := &Server{
@@ -138,20 +138,20 @@ func (s *Server) Start(addr string) error {
 func loadKeys() error {
 	publicKeyData, err := os.ReadFile("../../public.pem")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	publicKey, err = jwt.ParseRSAPublicKeyFromPEM(publicKeyData)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	privateKeyData, err := os.ReadFile("../../private.pem")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	privateKey, err = jwt.ParseRSAPrivateKeyFromPEM(privateKeyData)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	return nil
 }
