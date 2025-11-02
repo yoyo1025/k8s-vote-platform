@@ -33,6 +33,12 @@ func New() (*Server, error) {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
+	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup:  "header:X-CSRF-Token",
+		CookieName:   "csrf_token",
+		CookieSecure: false,
+	}))
+
 	if err := loadKeys(); err != nil {
 		return nil, err
 	}
@@ -80,9 +86,12 @@ func (s *Server) routes() {
 		cookie.HttpOnly = true
 		cookie.SameSite = http.SameSiteLaxMode
 		cookie.MaxAge = 3600
+		cookie.Secure = false
 		c.SetCookie(cookie)
 
-		return c.JSON(http.StatusNoContent, nil)
+		return c.JSON(http.StatusOK, map[string]any{
+			"message": "login successful",
+		})
 	})
 
 	s.e.GET("/auth/me", func(c echo.Context) error {
@@ -111,6 +120,13 @@ func (s *Server) routes() {
 
 		return c.JSON(http.StatusOK, map[string]any{
 			"email": claims.Subject,
+		})
+	})
+
+	s.e.GET("/auth/csrf", func(c echo.Context) error {
+		csrfToken := c.Get(middleware.DefaultCSRFConfig.ContextKey).(string)
+		return c.JSON(http.StatusOK, echo.Map{
+			"csrf_token": csrfToken,
 		})
 	})
 }
