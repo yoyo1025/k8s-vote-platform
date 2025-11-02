@@ -1,68 +1,4 @@
-version: '3'
-
-x-kong-config:
-  &kong-env
-  KONG_DATABASE: postgres
-  KONG_PG_DATABASE: kong
-  KONG_PG_HOST: db-postgres
-  KONG_PG_PASSWORD: kongpass
-  KONG_PG_USER: kong
-
-networks:
-  kong-net:
-    external: false
-  vote-net:
-    external: false
-
 services:
-  kong-migrations:
-    image: kong:3.5.0
-    command: >
-      sh -c "
-        set -e
-        kong migrations bootstrap || true
-        kong migrations up
-        kong migrations finish
-      "
-    profiles: [ "database" ]
-    depends_on:
-      db-postgres:
-        condition: service_healthy
-    environment:
-      <<: *kong-env
-    networks:
-      - kong-net
-    restart: on-failure
-
-  kong:
-    image: kong:3.5.0
-    profiles: [ "gateway" ]
-    depends_on:
-      kong-migrations:
-        condition: service_completed_successfully
-      db-postgres:
-        condition: service_healthy
-    environment:
-      <<: *kong-env
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001
-      KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8002
-    networks:
-      - kong-net
-    ports:
-      - "8000:8000"
-      - "8001:8001"
-      - "8002:8002"
-      - "8005:8005"
-      - "8006:8006"
-      - "8443:8443"
-      - "8444:8444"
-      - "8445:8445"
-    restart: on-failure
-
   db-postgres:
     image: postgres:16.1-bullseye
     profiles: [ "database" ]
@@ -81,7 +17,6 @@ services:
     tty: true
     networks:
       - kong-net
-
   vote-redis:
     image: redis:7
     profiles: [ "vote" ]
@@ -96,7 +31,6 @@ services:
       - vote-net
     ports:
       - "6379:6379"
-
   vote-postgres:
     image: postgres:16.1-bullseye
     profiles: [ "vote" ]
@@ -117,7 +51,6 @@ services:
       - vote-net
     ports:
       - "5432:5432"
-
   vote-api:
     build:
       context: .
@@ -145,7 +78,6 @@ services:
     restart: unless-stopped
     networks:
       - vote-net
-
   vote-worker:
     build:
       context: .
@@ -175,7 +107,6 @@ services:
     restart: unless-stopped
     networks:
       - vote-net
-
   auth:
     build:
       context: .
@@ -190,7 +121,6 @@ services:
       - kong-net
       - vote-net
     restart: unless-stopped
-
   result-query:
     build:
       context: .
@@ -211,7 +141,6 @@ services:
     networks:
       - vote-net
     restart: unless-stopped
-
   result-api:
     build:
       context: .
@@ -228,6 +157,10 @@ services:
       - vote-net
       - kong-net
     restart: unless-stopped
-
 volumes:
   vote-postgres-data:
+networks:
+  kong-net:
+    external: false
+  vote-net:
+    external: false
