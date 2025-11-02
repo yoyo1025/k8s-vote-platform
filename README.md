@@ -105,3 +105,9 @@ flowchart LR
 ```bash
 make start
 ```
+```bash
+make migrate-up
+```
+```bash
+make run-gateway-sync
+```
