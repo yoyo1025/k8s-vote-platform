@@ -82,6 +82,35 @@ func (s *Server) routes() {
 
 		return c.JSON(http.StatusNoContent, nil)
 	})
+
+	s.e.GET("/auth/me", func(c echo.Context) error {
+		cookie, err := c.Cookie("access_token")
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"error": "missing access token",
+			})
+		}
+
+		token, err := jwt.ParseWithClaims(cookie.Value, &jwt.RegisteredClaims{}, func(token *jwt.Token) (any, error) {
+			return publicKey, nil
+		})
+		if err != nil || !token.Valid {
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"error": "invalid access token",
+			})
+		}
+
+		claims, ok := token.Claims.(*jwt.RegisteredClaims)
+		if !ok {
+			return c.JSON(http.StatusUnauthorized, map[string]any{
+				"error": "invalid access token claims",
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]any{
+			"email": claims.Subject,
+		})
+	})
 }
 
 func (s *Server) Start(addr string) error {
