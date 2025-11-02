@@ -136,7 +136,9 @@ func (s *Server) Start(addr string) error {
 }
 
 func loadKeys() error {
-	publicKeyData, err := os.ReadFile("../../public.pem")
+	pubPath := getenvDefault("PUBLIC_PEM_PATH", "/run/secrets/public.pem")
+	privPath := getenvDefault("PRIVATE_PEM_PATH", "/run/secrets/private.pem")
+	publicKeyData, err := os.ReadFile(pubPath)
 	if err != nil {
 		return err
 	}
@@ -145,7 +147,7 @@ func loadKeys() error {
 		return err
 	}
 
-	privateKeyData, err := os.ReadFile("../../private.pem")
+	privateKeyData, err := os.ReadFile(privPath)
 	if err != nil {
 		return err
 	}
@@ -154,4 +156,11 @@ func loadKeys() error {
 		return err
 	}
 	return nil
+}
+
+func getenvDefault(k, d string) string {
+	if v := os.Getenv(k); v != "" {
+		return v
+	}
+	return d
 }

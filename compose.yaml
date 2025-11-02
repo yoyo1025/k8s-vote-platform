@@ -1,22 +1,4 @@
 services:
-  db-postgres:
-    image: postgres:16.1-bullseye
-    profiles: [ "database" ]
-    environment:
-      POSTGRES_DB: kong
-      POSTGRES_USER: kong
-      POSTGRES_PASSWORD: kongpass
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kong"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
-    restart: on-failure
-    stdin_open: true
-    tty: true
-    networks:
-      - kong-net
   vote-redis:
     image: redis:7
     profiles: [ "vote" ]
@@ -112,15 +94,17 @@ services:
       context: .
       dockerfile: services/auth/Dockerfile
     profiles: [ "auth" ]
-    environment:
-      AUTH_PRIVATE_KEY_FILE: /app/dev_private.pem
-      AUTH_ISSUER: http://localhost:18080
     ports:
       - "18080:18080"
-    networks:
-      - kong-net
-      - vote-net
     restart: unless-stopped
+    environment:
+      PUBLIC_PEM_PATH: /run/secrets/public.pem
+      PRIVATE_PEM_PATH: /run/secrets/privata.pem
+    volumes:
+      - ./services/auth/secrets/public.pem:/run/secrets/public.pem:ro
+      - ./services/auth/secrets/private.pem:/run/secrets/privata.pem:ro
+    networks:
+      - vote-net
   result-query:
     build:
       context: .
@@ -155,12 +139,9 @@ services:
       - "8080:8080"
     networks:
       - vote-net
-      - kong-net
     restart: unless-stopped
 volumes:
   vote-postgres-data:
 networks:
-  kong-net:
-    external: false
   vote-net:
     external: false
