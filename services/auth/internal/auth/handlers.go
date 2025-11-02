@@ -60,7 +60,9 @@ func (s *Server) routes() {
 		}
 		claims := jwt.RegisteredClaims{
 			Subject:   req.Email,
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			Issuer:    "auth-service",
 		}
 
 		token := jwt.NewWithClaims(jwt.SigningMethodPS256, claims)
