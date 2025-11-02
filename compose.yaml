@@ -119,15 +119,15 @@ services:
       - "5432:5432"
 
   vote-api:
-    image: golang:1.25
+    build:
+      context: .
+      dockerfile: services/vote-api/Dockerfile
     profiles: [ "vote" ]
     depends_on:
       vote-redis:
         condition: service_started
       vote-postgres:
         condition: service_healthy
-    working_dir: /workspace/services/vote-api
-    command: go run ./cmd/vote-api
     environment:
       HTTP_ADDR: ":9080"
       REDIS_ADDR: vote-redis:6379
@@ -147,15 +147,15 @@ services:
       - vote-net
 
   vote-worker:
-    image: golang:1.25
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
     profiles: [ "vote" ]
     depends_on:
       vote-redis:
         condition: service_started
       vote-postgres:
         condition: service_healthy
-    working_dir: /workspace/services/worker
-    command: go run ./cmd/worker
     environment:
       REDIS_ADDR: vote-redis:6379
       REDIS_STREAM: stream:votes
