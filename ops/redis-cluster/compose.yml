@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  redis:
+    build:
+      context: .
+    networks:
+      - redis-cluster-network
+
+networks:
+  redis-cluster-network:
